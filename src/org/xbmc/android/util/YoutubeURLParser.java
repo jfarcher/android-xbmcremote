@@ -4,7 +4,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import android.net.Uri;
-
+-public class YoutubeURLParser {
  public static String parseYoutubeURL(Uri playuri) {
         Pattern patregex;
         
@@ -29,3 +29,4 @@ import android.net.Uri;
             return null;
         }
     }
+}
