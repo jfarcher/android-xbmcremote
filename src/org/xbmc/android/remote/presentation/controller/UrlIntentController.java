@@ -152,29 +152,42 @@ public class UrlIntentController extends AbstractController implements IControll
 	 * Checks the intent that created/resumed this activity. Used to see if we are being handed
 	 * an URL that should be passed to XBMC.
 	 */
-	private void checkIntent(){
-		Intent intent = mActivity.getIntent();
-		final String action = intent.getAction();
+	pprivate void checkIntent(){
+        Intent intent = mActivity.getIntent();
+        final String action = intent.getAction();
 
-		if(action != null) {
-			Log.i("CHECKINTENT", action);
-			if ( action.equals(UrlIntentActivity.ACTION) ){
-				//final String path = intent.getData().toString();
-				final String path = intent.getStringExtra(Intent.EXTRA_TEXT);
-				final String subjectTxt = intent.getStringExtra(Intent.EXTRA_SUBJECT);
-				
-				if(isIMDB(subjectTxt)){
-					handleIMDb(path);
-					cleaupIntent(intent);
-				}
-				else if(isValidURL(path)){
-					handleURL(path);
-					cleaupIntent(intent);
-				}
+        if(action != null) {
+            Log.i("CHECKINTENT", action);
+            if ( action.equals(UrlIntentActivity.ACTION) ){
+                final String subjectTxt = intent.getStringExtra(Intent.EXTRA_SUBJECT);
 
-			}
-		}
-	}
+                // Youtube Filthy Hack
+                String pathtemp = intent.getStringExtra(Intent.EXTRA_TEXT).trim();
+            
+                if ((pathtemp.toLowerCase().contains("youtu.be/") == true) || (pathtemp.toLowerCase().contains("youtube.com/") == true)) {
+                    // This is a YOUTUBE link - fudge it.
+
+                    if (pathtemp.contains(" ") == true) {
+                        pathtemp = pathtemp.substring(pathtemp.lastIndexOf(' ')).trim();
+                    }
+                }
+                
+                final String path = pathtemp;
+                
+                // End Of Hack.
+            
+                if(isIMDB(subjectTxt)){
+                    handleIMDb(path);
+                    cleaupIntent(intent);
+                }
+                else if(isValidURL(path)){
+                    handleURL(path);
+                    cleaupIntent(intent);
+                }
+
+            }
+        }
+    }
 
 	private void handleIMDb(String path) {
 		final Pattern pattern = Pattern.compile("^http://imdb\\.com/title/(tt\\d{7})$", Pattern.MULTILINE);
